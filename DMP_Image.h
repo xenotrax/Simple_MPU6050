@@ -491,21 +491,25 @@ class Quaternion {
   Quaternion(long * n) {
     setQuaternion((float)n[0], (float)n[1], (float)n[2], (float)n[3]);
   }
-  Quaternion setQuaternion(float * n) {
+  Quaternion* setQuaternion(float * n) {
     setQuaternion(n[0], n[1], n[2], n[3]);
+    return this;
   }
-  Quaternion setQuaternion(long * n) {
+  Quaternion* setQuaternion(long * n) {
     setQuaternion((float)n[0], (float)n[1], (float)n[2], (float)n[3]);
+    return this;
   }
   Quaternion(float nw, float nx, float ny, float nz) {
     setQuaternion(nw, nx, ny, nz);
   }
-  Quaternion setQuaternion(float nw, float nx, float ny, float nz) {
+  Quaternion* setQuaternion(float nw, float nx, float ny, float nz) {
     w = nw;
     x = nx;
     y = ny;
     z = nz;
+    return this;
   }
+
   Quaternion getProduct(Quaternion q) {
     // Quaternion multiplication is defined by:
     //     (Q1 * Q2).w = (w1w2 - x1x2 - y1y2 - z1z2)
@@ -527,13 +531,13 @@ class Quaternion {
     return sqrt(w*w + x*x + y*y + z*z);
   }
   
-  Quaternion :: normalize() {
+  Quaternion* normalize() {
     float m = getMagnitude();
     w /= m;
     x /= m;
     y /= m;
     z /= m;
-    return this;
+    return  this;
   }
   
   Quaternion getNormalized() {
@@ -542,6 +546,7 @@ class Quaternion {
     return r;
   }
 };
+
 
 class VectorInt16 {
   public:
@@ -566,7 +571,7 @@ class VectorInt16 {
     return sqrt((float)x*(float)x + (float)y*(float)y + (float)z*(float)z);
   }
 
-  VectorInt16 :: normalize() {
+  VectorInt16* normalize() {
     float m = getMagnitude();
     x /= m;
     y /= m;
@@ -580,7 +585,7 @@ class VectorInt16 {
     return r;
   }
   
-  VectorInt16 :: rotate(Quaternion *q) {
+  VectorInt16* rotate(Quaternion *q) {
     // http://www.cprogramming.com/tutorial/3d/quaternions.html
     // http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/transforms/index.htm
     // http://content.gpwiki.org/index.php/OpenGL:Tutorials:Using_Quaternions_to_represent_rotation
@@ -635,7 +640,7 @@ class VectorFloat {
     return sqrt(x*x + y*y + z*z);
   }
 
-  VectorFloat :: normalize() {
+  VectorFloat* normalize() {
     float m = getMagnitude();
     x /= m;
     y /= m;
@@ -649,7 +654,7 @@ class VectorFloat {
     return r;
   }
   
-  VectorFloat :: rotate(Quaternion *q) {
+  VectorFloat* rotate(Quaternion *q) {
     Quaternion p(0, x, y, z);
 
     // quaternion multiplication: q * p, stored back in p

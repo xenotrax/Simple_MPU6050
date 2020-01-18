@@ -7,7 +7,7 @@
 //#define SELF_TEST_Y_GYRO_READ_yg_st_data(Data)			MPUi2cReadByte(0x01, (uint8_t *)Data)  //   self test output generated during manufacturing tests
 //#define SELF_TEST_Z_GYRO_READ_zg_st_data(Data)			MPUi2cReadByte(0x02, (uint8_t *)Data)  //   self test output generated during manufacturing tests
 //6050 Accellerator Offsets
-#define A_OFFSET_H_READ_A_OFFS(Data)						MPUi2cReadInts(0x06, 3, (uint16_t *)Data)  //   X accelerometer offset cancellation
+#define A_OFFSET_H_READ_A_OFFS(Data)						MPUi2cReadInts(0x06, 3, (uint16_t*) Data)  //   X accelerometer offset cancellation
 #define XA_OFFSET_H_READ_XA_OFFS(Data)						MPUi2cReadInt(0x06, (uint16_t *)Data)  //   X accelerometer offset cancellation
 #define YA_OFFSET_H_READ_YA_OFFS(Data)						MPUi2cReadInt(0x08, (uint16_t *)Data)  //   Y accelerometer offset cancellation
 #define ZA_OFFSET_H_READ_ZA_OFFS(Data)						MPUi2cReadInt(0x0A, (uint16_t *)Data)  //   Z accelerometer offset cancellation
@@ -23,7 +23,7 @@
 #define SELF_TEST_Z_READ_ZA_TEST(Data)						MPUi2cRead(0x0F, 3, 7, (uint8_t *)Data)  //   self test output generated during manufacturing tests
 #define SELF_TEST_Z_READ_ZG_TEST(Data)						MPUi2cRead(0x0F, 5, 4, (uint8_t *)Data)  //   self test output generated during manufacturing tests
 //Both
-#define XG_OFFSET_H_READ_OFFS_USR(Data)						MPUi2cReadInts(0x13, 3, (uint16_t *)Data)  //   Remove DC bias from the gyro sensor Step 0.0305 dps
+#define XG_OFFSET_H_READ_OFFS_USR(Data)						MPUi2cReadInts(0x13, 3, (uint16_t*) Data)  //   Remove DC bias from the gyro sensor Step 0.0305 dps
 #define XG_OFFSET_H_READ_X_OFFS_USR(Data)					MPUi2cReadInt(0x13, (uint16_t *)Data)  //   Remove DC bias from the gyro sensor Step 0.0305 dps
 #define YG_OFFSET_H_READ_Y_OFFS_USR(Data)					MPUi2cReadInt(0x15, (uint16_t *)Data)  //   Remove DC bias from the gyro sensor Step 0.0305 dps
 #define ZG_OFFSET_H_READ_Z_OFFS_USR(Data)					MPUi2cReadInt(0x17, (uint16_t *)Data)  //   Remove DC bias from the gyro sensor Step 0.0305 dps
@@ -164,7 +164,7 @@
 #define INT_STATUS_READ_FSYNC_INT(Data)                     MPUi2cRead(0x3A, 1, 3, (uint8_t *)Data)  //   1   Fsync interrupt occurred.
 #define INT_STATUS_READ_RAW_DATA_RDY_INT(Data)              MPUi2cRead(0x3A, 1, 0, (uint8_t *)Data)  //   T 1   Sensor Register Raw Data sensors are updated and Ready to be read.
 
-#define ACCEL_XOUT_H_READ_ACCEL_TMP_GYTO(Data)              MPUi2cReadInts(0x3B,7, (uint16_t *)Data)  //   accelerometer x-axis data.
+#define ACCEL_XOUT_H_READ_ACCEL_TMP_GYTO(Data)              MPUi2cReadInts(0x3B,7, (uint16_t*) Data)  //   accelerometer x-axis data.
 
 #define ACCEL_XOUT_H_READ_ACCEL(Data)                       MPUi2cReadInts(0x3B, 3, (uint16_t *)Data)  //   accelerometer x-axis data.
 
@@ -174,7 +174,7 @@
 
 #define TEMP_OUT_H_READ_TEMP_OUT(Data)                      MPUi2cReadInt(0x41, (uint16_t *)Data)  //   temperature sensor output   TEMP_degC = ((TEMP_OUT   RoomTemp_Offset)/Temp_Sensitivity) + 21degC
 
-#define GYRO_XOUT_H_READ_GYRO(Data)                         MPUi2cReadInts(0x43, 3, (uint16_t *)Data)  //   X-Axis gyroscope output
+#define GYRO_XOUT_H_READ_GYRO(Data)                         MPUi2cReadInts(0x43, 3, (uint16_t*) Data)  //   X-Axis gyroscope output
 
 #define GYRO_XOUT_H_READ_GYRO_XOUT(Data)                    MPUi2cReadInt(0x43, (uint16_t *)Data)  //   X-Axis gyroscope output
 #define GYRO_YOUT_H_READ_GYRO_YOUT(Data)                    MPUi2cReadInt(0x45, (uint16_t *)Data)  //   Y-Axis gyroscope output

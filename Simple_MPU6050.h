@@ -7,7 +7,9 @@
 #include "MPU_ReadMacros.h"
 
 #define ENABLE_MPU_OVERFLOW_PROTECTION(...) void yield(void){mpu.OverflowProtection();} // yield is called from within the delay() function 
-
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
+#endif
 
 
 class Simple_MPU6050 : public I2Cdev {
@@ -47,7 +49,7 @@ class Simple_MPU6050 : public I2Cdev {
 	uint8_t TVal; // TVal For any read
     uint8_t packet_length;
     uint16_t dmp_features;
-    uint16_t sensor_timestamp;
+    uint32_t sensor_timestamp;
     int16_t  gyro[3], accel[3];
 	float mag[3];
     int32_t quat[4];
@@ -72,7 +74,7 @@ class Simple_MPU6050 : public I2Cdev {
     Simple_MPU6050(); // Constructor
     Simple_MPU6050 & SetAddress(uint8_t address);
     uint8_t CheckAddress();
-    uint8_t TestConnection(int Stop = 1);
+    uint8_t TestConnection();
     void OverflowProtection(void);
 	Simple_MPU6050 & CalibrateMPU(int16_t ax_, int16_t ay_, int16_t az_, int16_t gx_, int16_t gy_, int16_t gz_);
 	Simple_MPU6050 & CalibrateMPU(uint8_t Loops = 30);

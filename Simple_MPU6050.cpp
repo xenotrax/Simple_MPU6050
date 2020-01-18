@@ -5,7 +5,9 @@
 #include "Simple_MPU6050.h"
 #include "MPU_ReadMacros.h"
 #include "MPU_WriteMacros.h"
-
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
+#endif
 //#define USE_OLD_GETYAWPITCHROLL // Calculation returns different values but possibly relevant for your project Try both out
 // OLD Yaw +- 180, Pitch and Roll +- 90 (Peaks at 90 deg then fall back to zero, shows Negative when pointing down pitch and left roll)
 // NEW Yaw +- 180, Pitch and Roll +- 180 (Continues to 180 deg then -180 back to zero, shows Negative when pointing down pitch and left roll)
@@ -120,10 +122,10 @@ void Simple_MPU6050::OverflowProtection(void) {
 */
 Simple_MPU6050 & Simple_MPU6050::dmp_read_fifo() {
 	if (!CheckForInterrupt()) return *this;
-	if (!dmp_read_fifo(gyro, accel, quat, sensor_timestamp)) {
+	if (!dmp_read_fifo(gyro, accel, quat, &sensor_timestamp)) {
 		return *this;
 	}
-	if (on_FIFO_cb) on_FIFO_cb(gyro, accel, quat, sensor_timestamp);
+	if (on_FIFO_cb) on_FIFO_cb(gyro, accel, quat, &sensor_timestamp);
 	return *this;
 }
 
@@ -144,7 +146,7 @@ uint8_t Simple_MPU6050::dmp_read_fifo(int16_t *gyro, int16_t *accel, int32_t *qu
 	more = (fifo_count / packet_length);
 	while (more--) {
 		FIFO_READ(packet_length, fifo_data);
-		timestamp = millis();
+		*timestamp = millis();
 	}
 	/* Parse DMP packet. */
 	quat[0] = ((int32_t)fifo_data[0] << 24) | ((int32_t)fifo_data[1] << 16) | ((int32_t)fifo_data[2] << 8) | fifo_data[3];
@@ -159,7 +161,7 @@ uint8_t Simple_MPU6050::dmp_read_fifo(int16_t *gyro, int16_t *accel, int32_t *qu
 	gyro[0] = ((int16_t)fifo_data[ii + 0] << 8) | fifo_data[ii + 1];
 	gyro[1] = ((int16_t)fifo_data[ii + 2] << 8) | fifo_data[ii + 3];
 	gyro[2] = ((int16_t)fifo_data[ii + 4] << 8) | fifo_data[ii + 5];
-	return 1;
+	return (uint8_t) 1;
 }
 
 //***************************************************************************************
@@ -228,10 +230,10 @@ Simple_MPU6050 & Simple_MPU6050::MPUi2cWrite(uint8_t regAddr, uint8_t length, ui
 }
 Simple_MPU6050 & Simple_MPU6050::MPUi2cWrite(uint8_t AltAddress,uint8_t regAddr, uint8_t length, uint8_t bitNum, uint8_t Val) {
 	if (length == 1) {
-		I2CWriteStatus = writeBit(AltAddress, regAddr, bitNum, &Val); // Alters 1 bit by reading the byte making a change and storing the byte (faster than writeBits)
+		I2CWriteStatus = writeBit(AltAddress, regAddr, bitNum, Val); // Alters 1 bit by reading the byte making a change and storing the byte (faster than writeBits)
 	}
 	else if (bitNum != 255) {
-		I2CWriteStatus = writeBits(AltAddress, regAddr, bitNum, length, &Val); // Alters several bits by reading the byte making a change and storing the byte
+		I2CWriteStatus = writeBits(AltAddress, regAddr, bitNum, length, Val); // Alters several bits by reading the byte making a change and storing the byte
 	}
 	return *this;
 }
@@ -320,7 +322,7 @@ Simple_MPU6050 & Simple_MPU6050::load_DMP_Image(int16_t ax_, int16_t ay_, int16_
 //#define PWR_MGMT_1_WRITE_DEVICE_RESET(...) MPUi2cWrite(0x6B, 1, 7, 1);delay(100);MPUi2cWrite(0x6A, 4, 3, 0b1111);delay(100);  //   1  Reset the internal registers and restores the default settings. Write a 1 to set the reset, the bit will auto clear.
 Simple_MPU6050 & Simple_MPU6050::load_DMP_Image(uint8_t CalibrateMode) {
 	uint8_t val;
-	TestConnection(1);
+	TestConnection();
 	Serial.println();
 	PWR_MGMT_1_WRITE_DEVICE_RESET();			//PWR_MGMT_1:(0x6B Bit7 true) reset with 100ms delay and full SIGNAL_PATH_RESET:(0x6A Bits 3,2,1,0 True) with another 100ms delay
 	MPUi2cWriteByte(0x6B, 0x01);				// 0000 0001 PWR_MGMT_1:Clock Source Select PLL_X_gyro
@@ -337,7 +339,7 @@ Simple_MPU6050 & Simple_MPU6050::load_DMP_Image(uint8_t CalibrateMode) {
 	}
 	MPUi2cWriteByte(0x1B, 0x18);				// 0001 1000 GYRO_CONFIG: 3 = +2000 Deg/sec
 	resetOffset();	// Load Calibration offset values into MPU
-	if(CalibrateMode)return;
+	if(CalibrateMode) return *this;
 	PrintActiveOffsets();
 	AKM_Init();
 	MPUi2cWriteByte(0x6A, 0xC0);				// 1100 1100 USER_CTRL: Enable FIFO and Reset FIFO
@@ -437,8 +439,9 @@ Simple_MPU6050 & Simple_MPU6050::load_firmware(uint16_t  length, const uint8_t *
 returns 1 on success
 stops or returns 0 on fail
 */
-uint8_t Simple_MPU6050::TestConnection(int Stop = 1) {
+uint8_t Simple_MPU6050::TestConnection() {
 	byte x;
+	int Stop = 1;
 	Wire.beginTransmission(CheckAddress());
 	if(Wire.endTransmission() != 0){
 		if(Stop == 2){
@@ -528,8 +531,8 @@ void view_MPU_Startup_Registers() {
 	ShowByte(0x38);
 }
 
-#define A_OFFSET_H_READ_A_OFFS(Data)    MPUi2cReadInts(0x06, 3, Data)  //   X accelerometer offset cancellation
-#define XG_OFFSET_H_READ_OFFS_USR(Data) MPUi2cReadInts(0x13, 3, Data)  //   Remove DC bias from the gyro sensor Step 0.0305 dps
+#define A_OFFSET_H_READ_A_OFFS(Data)    MPUi2cReadInts(0x06, 3, (uint16_t*) Data)  //   X accelerometer offset cancellation
+#define XG_OFFSET_H_READ_OFFS_USR(Data) MPUi2cReadInts(0x13, 3, (uint16_t*) Data)  //   Remove DC bias from the gyro sensor Step 0.0305 dps
 #define printfloatx(Name,Variable,Spaces,Precision,EndTxt) Serial.print(Name); {char S[(Spaces + Precision + 3)];Serial.print(F(" ")); Serial.print(dtostrf((float)Variable,Spaces,Precision ,S));}Serial.print(EndTxt);//Name,Variable,Spaces,Precision,EndTxt
 
 
@@ -571,7 +574,7 @@ bool Simple_MPU6050::view_DMP_firmware_Instance(uint16_t  length) {
 	Serial.print(F("const unsigned char dmp_memory[DMP_CODE_SIZE] PROGMEM = {\n"));
 		for (ii = 0; ii < length; ii += this_read) {
 			this_read = min(LOAD_CHUNK, length - ii);
-			writeWords(devAddr, 0x6D, 1,  ii);
+			writeWords(devAddr, 0x6D, 1,  &ii);
 			readBytes(devAddr, 0x6F,  this_read, cur);
 			if ((ii % (16 * 16)) == 0) {
 				Serial.print(F("/* bank # "));
@@ -627,7 +630,7 @@ Simple_MPU6050 & Simple_MPU6050::CalibrateAccel(uint8_t Loops ) {
 #define SPrint(Data) Serial.print(Data);Serial.print(", ");
 Simple_MPU6050 & Simple_MPU6050::PID(uint8_t ReadAddress, float kP,float kI, uint8_t Loops) {
 	uint8_t SaveAddress = (ReadAddress == 0x3B)?((WhoAmI < 0x38 )? 0x06:0x77):0x13;
-	int16_t Data;
+	uint16_t Data;
 	float Reading;
 	int16_t BitZero[3];
 	uint8_t shift =(SaveAddress == 0x77)?3:2;
