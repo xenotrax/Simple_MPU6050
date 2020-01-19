@@ -24,6 +24,7 @@ volatile uint8_t _maxPackets;
 */
 Simple_MPU6050::Simple_MPU6050() {
 
+	pinMode(interruptPin,INPUT);
 	SetAddress(MPU6050_DEFAULT_ADDRESS);
 	packet_length = 28;
 	/*
@@ -92,6 +93,7 @@ uint8_t Simple_MPU6050::CheckForInterrupt(void) {
 	return InteruptTriggered;
 }
 
+
 /**
 @brief      During the Dreded delay() using yield() limit the fifo packets to 10 less than max packets
 */
@@ -139,6 +141,8 @@ uint8_t Simple_MPU6050::dmp_read_fifo(int16_t *gyro, int16_t *accel, int32_t *qu
 	uint16_t fifo_count = 0;
 	uint8_t more;
 	FIFO_COUNTH_READ_FIFO_CNT(&fifo_count);
+//		Serial.println(fifo_count);
+//		Serial.println(packet_length);
 	if ((fifo_count < packet_length) || (fifo_count % packet_length)) {
 		reset_fifo();
 		return 0;
@@ -346,12 +350,12 @@ Simple_MPU6050 & Simple_MPU6050::load_DMP_Image(uint8_t CalibrateMode) {
 	MPUi2cWriteByte(0x38, 0x02);				// 0000 0010 INT_ENABLE: RAW_DMP_INT_EN on
 	MPUi2cWrite(0x6A, 1, 2, 1);					// Reset FIFO one last time just for kicks. (MPUi2cWrite reads 0x6A first and only alters 1 byte and then saves the byte)
 	dmp_on = 1;
-	attachInterrupt(0, [] {mpuInterrupt = true;}, RISING); //NOTE: "[]{mpuInterrupt = true;}" Is a complete funciton without a name. It is handed to the callback of attachInterrupts Google: "Lambda anonymous functions"
+	attachInterrupt(interruptPin, [] {mpuInterrupt = true;}, RISING); //NOTE: "[]{mpuInterrupt = true;}" Is a complete funciton without a name. It is handed to the callback of attachInterrupts Google: "Lambda anonymous functions"
 	//These are the features the above code initialized for you by default (ToDo Allow removal of one or more Features)
 	dmp_features = DMP_FEATURE_6X_LP_QUAT | DMP_FEATURE_SEND_RAW_ACCEL | DMP_FEATURE_SEND_RAW_GYRO |  DMP_FEATURE_SEND_CAL_GYRO; // These are Fixed into the DMP_Image and Can't be change easily at this time.
 	return *this;
 }
-
+ 
 /**
 @brief      ***EVERYTHING!*** needed to get DMP up and running! With Calibration!!!
 */
