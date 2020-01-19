@@ -325,7 +325,6 @@ Simple_MPU6050 & Simple_MPU6050::load_DMP_Image(int16_t ax_, int16_t ay_, int16_
 #define CompassCheck(Cnt)   {uint8_t D; Serial.print(F("\n")); Serial.print(Cnt); Serial.print(F(" Read AKM Who am I: ")); Serial.print(I2Cdev::readBytes(0x0C,0,1,&D));Serial.print(F(" Value = 0x"));Serial.println(D);}
 //#define PWR_MGMT_1_WRITE_DEVICE_RESET(...) MPUi2cWrite(0x6B, 1, 7, 1);delay(100);MPUi2cWrite(0x6A, 4, 3, 0b1111);delay(100);  //   1  Reset the internal registers and restores the default settings. Write a 1 to set the reset, the bit will auto clear.
 Simple_MPU6050 & Simple_MPU6050::load_DMP_Image(uint8_t CalibrateMode) {
-	uint8_t val;
 	TestConnection();
 	Serial.println();
 	PWR_MGMT_1_WRITE_DEVICE_RESET();			//PWR_MGMT_1:(0x6B Bit7 true) reset with 100ms delay and full SIGNAL_PATH_RESET:(0x6A Bits 3,2,1,0 True) with another 100ms delay
@@ -368,6 +367,7 @@ Simple_MPU6050 & Simple_MPU6050::CalibrateMPU(int16_t ax_, int16_t ay_, int16_t 
 	sgy_ = gy_;
 	sgz_ = gz_;
 	CalibrateMPU(10);
+	return *this;
 }
 
 Simple_MPU6050 & Simple_MPU6050::CalibrateMPU(uint8_t Loops) {
@@ -400,13 +400,11 @@ Simple_MPU6050 & Simple_MPU6050::load_firmware(uint16_t  length, const uint8_t *
 	uint16_t  ii;
 	uint16_t  this_write;
 
-	uint16_t bankNum = 0;
 	/* Must divide evenly into st.hw->bank_size to avoid bank crossings. */
 	#define LOAD_CHUNK  (16)
-	uint8_t cur[LOAD_CHUNK], tmp[2];
 	uint8_t firmware_chunk[LOAD_CHUNK];
 	if (loaded)return *this; /* DMP should only be loaded once. */
-	if (!firmware) *this;
+	if (!firmware) return *this;
 
 	for (ii = 0; ii < length; ii += this_write) {
 		this_write = min(LOAD_CHUNK, length - ii);
@@ -415,6 +413,8 @@ Simple_MPU6050 & Simple_MPU6050::load_firmware(uint16_t  length, const uint8_t *
 		for ( x = 0; x < this_write; x++ ) firmware_chunk[x] = pgm_read_byte_near(pFirmware + x);
 		write_mem(ii, this_write, firmware_chunk);
 		#ifdef DEBUG
+ 		uint16_t bankNum = 0;
+		uint8_t cur[LOAD_CHUNK], tmp[2];
 		// this displays the firmware by retrieving it from the MPU6050 after it was written to the serial port
 		read_mem(ii, this_write, cur);
 		if ((ii % (16 * 16)) == 0) {
@@ -433,6 +433,7 @@ Simple_MPU6050 & Simple_MPU6050::load_firmware(uint16_t  length, const uint8_t *
 	}
 	#ifdef DEBUG
 	Serial.println();
+
 	#endif
 	loaded = true;
 	return *this;
@@ -444,7 +445,6 @@ returns 1 on success
 stops or returns 0 on fail
 */
 uint8_t Simple_MPU6050::TestConnection() {
-	byte x;
 	int Stop = 1;
 	Wire.beginTransmission(CheckAddress());
 	if(Wire.endTransmission() != 0){
@@ -516,12 +516,11 @@ void Simple_MPU6050::view_Vital_MPU_Registers() {
 	"reset_fifo();/n"));
 }
 
-#define DPRINTBIN(Num) for (uint32_t t = (1UL<< (sizeof(Num)*8)-1); t; t >>= 1) Serial.write(Num  & t ? '1' : '0'); // Prints a binary number with leading zeros (Automatic Handling)
+#define DPRINTBIN(Num) for (uint32_t t = ((1UL)<< ((sizeof(Num)*8)-1)); t; t >>= 1) Serial.write(Num  & t ? '1' : '0'); // Prints a binary number with leading zeros (Automatic Handling)
 #define DPRINTHEX(Num) Serial.print(Num>>4,HEX);Serial.print(Num&0X0F,HEX);
 #define ShowByte(Addr) {uint8_t val; I2Cdev::readBytes(0x68, Addr, 1, &val);  Serial.print("0x"); DPRINTHEX(Addr); Serial.print(" = 0x"); DPRINTHEX(val); Serial.print(" = 0B"); DPRINTBIN(val); Serial.println();}
 
 void view_MPU_Startup_Registers() {
-	uint8_t val;
 	// Reset code for your convenience:
 	ShowByte(0x23);
 	ShowByte(0x1C);
@@ -1096,7 +1095,6 @@ Simple_MPU6050 & Simple_MPU6050::mpu_set_bypass(unsigned char bypass_on){
 	return *this;
 }
 
-#define printfloatx(Name,Variable,Spaces,Precision,EndTxt) print(Name); {char S[(Spaces + Precision + 3)];Serial.print(F(" ")); Serial.print(dtostrf((float)Variable,Spaces,Precision ,S));}Serial.print(EndTxt);//Name,Variable,Spaces,Precision,EndTxt
 Simple_MPU6050 & Simple_MPU6050::readMagData(){
 	//read mag
 	static unsigned long _ETimer;
@@ -1180,16 +1178,15 @@ Simple_MPU6050 & Simple_MPU6050::readMagData(){
 	return *this;
 }
 
-
-#define DPRINTBIN(Num) for (uint32_t t = (1UL<< (sizeof(Num)*8)-1); t; t >>= 1) Serial.write(Num  & t ? '1' : '0'); // Prints a binary number with leading zeros (Automatic Handling)
+#define DPRINTBIN(Num) for (uint32_t t = ((1UL)<< ((sizeof(Num)*8)-1)); t; t >>= 1) Serial.write(Num  & t ? '1' : '0'); // Prints a binary number with leading zeros (Automatic Handling)
 #define DPRINTHEX(Num) Serial.print(Num>>4,HEX);Serial.print(Num&0X0F,HEX);
 #define ShowByte(Addr) {uint8_t val; I2Cdev::readBytes(0x68, Addr, 1, &val);  Serial.print("0x"); DPRINTHEX(Addr); Serial.print(" = 0x"); DPRINTHEX(val); Serial.print(" = 0B"); DPRINTBIN(val); Serial.println();}
 #define ShowValue(Name, FunctionD) FunctionD; Serial.print(Name); Serial.print(" = 0x"); DPRINTHEX(D); Serial.print(" = 0B"); DPRINTBIN(D); Serial.println();
 // Work in Progress:
 Simple_MPU6050 & Simple_MPU6050::readMagDataThroughMPU(){
 	//read mag
-	uint8_t D;
-	uint8_t rawData[8];  // x/y/z gyro register data, ST2 register stored here, must read ST2 at end of data acquisition
+	//uint8_t D;
+	//uint8_t rawData[8];  // x/y/z gyro register data, ST2 register stored here, must read ST2 at end of data acquisition
 	/*
 	//  readBytes(AK8963_ADDRESS, AK8963_XOUT_L, 7, &rawData[0]);  // Read the six raw data and ST2 registers sequentially into data array
 	// I2C_SLV0_ADDR_WRITE_I2C_SLV0_RNW(1);
@@ -1236,21 +1233,19 @@ Simple_MPU6050 & Simple_MPU6050::readMagDataThroughMPU(){
 }
 
 
-
-
-
 #define spamtimer(t)										for (static uint32_t SpamTimer; (uint32_t)(millis() - SpamTimer) >= (t); SpamTimer = millis())
 Simple_MPU6050 & Simple_MPU6050::magcalMPU(){
 //https://github.com/kriswiner/MPU6050/wiki/Simple-and-Effective-Magnetometer-Calibration
 //https://appelsiini.net/2018/calibrate-magnetometer/
 	uint8_t DelayCnt = 5;
 	uint8_t Ready;
-	uint16_t ii = 0, sample_count = 0, PCount = 0;
+//	uint16_t ii = 0; 
+	uint16_t sample_count = 0, PCount = 0;
 //	int32_t mag_scale[3] = {0, 0, 0};
 	int16_t mag_max[3] = {-32767, -32767, -32767};
 	int16_t mag_min[3] = {32767, 32767, 32767};
 	int16_t mag_temp[3] = {0, 0, 0};
-	int16_t RawCompass[3];
+//	int16_t RawCompass[3];
 	Serial.println(F("Mag Calibration: Wave device in a figure eight until done! @ 2Minutes"));
 	delay(1000);
 	Serial.println(F("Ready"));
@@ -1329,11 +1324,11 @@ Simple_MPU6050 & Simple_MPU6050::setMagOffsets(float xMagB,float yMagB,float zMa
 	mag_scale[0] = (float)xMagS;
 	mag_scale[1] = (float)yMagS;
 	mag_scale[2] = (float)zMagS;
-
+	return *this;
 }
 
 
-Simple_MPU6050 & Simple_MPU6050::PrintMagOffsets(){
+Simple_MPU6050 &  Simple_MPU6050::PrintMagOffsets(){
 	Serial.print(F("\n//                  X MagBias  Y MagBias  Z MagBias  X MagScale Y MagScale Z MagScale\n#define MAG_OFFSETS "));
 	printfloatx("", mag_bias[0], 7, 1, ",  ");
 	printfloatx("", mag_bias[1], 7, 1, ",  ");
@@ -1342,6 +1337,7 @@ Simple_MPU6050 & Simple_MPU6050::PrintMagOffsets(){
 	printfloatx("", mag_scale[1], 7, 3,",  ");
 	printfloatx("", mag_scale[2], 7, 3,"");
 	Serial.println();
+	return *this;
 }
 
 /*

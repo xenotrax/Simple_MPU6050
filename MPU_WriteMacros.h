@@ -90,12 +90,14 @@
 																							//   can be disabled when not in use and the logic to detect lost arbitration is disabled.
 #define I2C_MST_CTRL_WRITE_WAIT_FOR_ES(Data)            MPUi2cWrite(0x24, 1, 6, (uint8_t)Data)		//   Delays the data ready interrupt until external sensor data is loaded. If
 																							//   I2C_MST_IF is disabled, the interrupt will still occur.
-#define I2C_MST_CTRL_WRITE_SLV_3_FIFO_EN(Data)          MPUi2cWrite(0x24, 1, 5, (uint8_t)Data)		//   1 – write EXT_SENS_DATA registers associated to SLV_3 (as determined by
+#define I2C_MST_CTRL_WRITE_SLV_3_FIFO_EN(Data)          MPUi2cWrite(0x24, 1, 5, (uint8_t)Data)		//   1 ï¿½ write EXT_SENS_DATA registers associated to SLV_3 (as determined by
 																							//   I2C_SLV0_CTRL and I2C_SLV1_CTRL and I2C_SLV2_CTRL) to the FIFO at the sample rate;
-																							//   0 – function is disabled
-#define I2C_MST_CTRL_WRITE_I2C_MST_P_NSR(Data)          MPUi2cWrite(0x24, 1, 4, (uint8_t)Data)		//   This bit controls the I2C Master’s transition from one slave read to the next
+																							//   0 ï¿½ function is disabled
+#define I2C_MST_CTRL_WRITE_I2C_MST_P_NSR(Data)          MPUi2cWrite(0x24, 1, 4, (uint8_t)Data)		//   This bit controls the I2C Masterï¿½s transition from one slave read to the next
 																							//   slave read. If 0, there is a restart between reads. If 1, there is a stop between reads.
-#define I2C_MST_CTRL_WRITE_I2C_MST_CLK(Data)            MPUi2cWrite(0x24, 4, 3, (uint8_t)Data)		//   I2C_MST_CLK is a 4 bit unsigned value which configures a divider on the MPU9250 internal 8MHz clock. 																							//   It sets the I2C master clock speed according to the following table:#define I2C_MST_CTRL_WRITE_I2C_MST_CLK_348(...)         MPUi2cWrite(0x24, 4, 3, (uint8_t)0)
+#define I2C_MST_CTRL_WRITE_I2C_MST_CLK(Data)            MPUi2cWrite(0x24, 4, 3, (uint8_t)Data)		//   I2C_MST_CLK is a 4 bit unsigned value which configures a divider on the MPU9250 internal 8MHz clock. 
+																							//   It sets the I2C master clock speed according to the following table:
+#define I2C_MST_CTRL_WRITE_I2C_MST_CLK_348(...)         MPUi2cWrite(0x24, 4, 3, (uint8_t)0)
 #define I2C_MST_CTRL_WRITE_I2C_MST_CLK_333(...)         MPUi2cWrite(0x24, 4, 3, (uint8_t)1)
 #define I2C_MST_CTRL_WRITE_I2C_MST_CLK_320(...)         MPUi2cWrite(0x24, 4, 3, (uint8_t)2)
 #define I2C_MST_CTRL_WRITE_I2C_MST_CLK_308(...)         MPUi2cWrite(0x24, 4, 3, (uint8_t)3)
@@ -111,16 +113,17 @@
 #define I2C_MST_CTRL_WRITE_I2C_MST_CLK_400(...)         MPUi2cWrite(0x24, 4, 3, (uint8_t)13)			//   * 13 400 kHz 
 #define I2C_MST_CTRL_WRITE_I2C_MST_CLK_381(...)         MPUi2cWrite(0x24, 4, 3, (uint8_t)14)
 #define I2C_MST_CTRL_WRITE_I2C_MST_CLK_364(...)         MPUi2cWrite(0x24, 4, 3, (uint8_t)15) 
-
+
+
 // I2C Slave 0
-#define I2C_SLV0_ADDR_WRITE_I2C_SLV0_RNW(Data)          MPUi2cWrite(0x25, 1, 7, (uint8_t)Data)		//   1 – Transfer is a read, 0 – Transfer is a write
+#define I2C_SLV0_ADDR_WRITE_I2C_SLV0_RNW(Data)          MPUi2cWrite(0x25, 1, 7, (uint8_t)Data)		//   1 ï¿½ Transfer is a read, 0 ï¿½ Transfer is a write
 #define I2C_SLV0_ADDR_WRITE_I2C_ID_0(Data)              MPUi2cWrite(0x25, 7, 6, (uint8_t)Data)		//   Physical address of I2C slave 0
 #define I2C_SLV0_REG_WRITE_I2C_SLV0_REG(Data)           MPUi2cWriteByte(0x26, (uint8_t)Data)			//   I2C slave 0 register address from where to begin data transfer
 
-#define I2C_SLV0_CTRL_WRITE_I2C_SLV0_EN(Data)           MPUi2cWrite(0x27, 1, 7, (uint8_t)Data)		//   1 – Enable reading data from this slave at the sample rate and storing data at the first available EXT_SENS_DATA register,
-																							//	which is always EXT_SENS_DATA_00 for I2C slave 0. 0 – function is disabled for this slave
-#define I2C_SLV0_CTRL_WRITE_I2C_SLV0_BYTE_SW(Data)      MPUi2cWrite(0x27, 1, 6, (uint8_t)Data)		//   1 – Swap bytes when reading both the low and high byte of a word. Note there is nothing to swap after reading the first byte
-																							//	if I2C_SLV0_REG[0] = 1, or if the last byte read has a register address lsb = 0. 0 – no swapping occurs, bytes are written in order read.
+#define I2C_SLV0_CTRL_WRITE_I2C_SLV0_EN(Data)           MPUi2cWrite(0x27, 1, 7, (uint8_t)Data)		//   1 ï¿½ Enable reading data from this slave at the sample rate and storing data at the first available EXT_SENS_DATA register,
+																							//	which is always EXT_SENS_DATA_00 for I2C slave 0. 0 ï¿½ function is disabled for this slave
+#define I2C_SLV0_CTRL_WRITE_I2C_SLV0_BYTE_SW(Data)      MPUi2cWrite(0x27, 1, 6, (uint8_t)Data)		//   1 ï¿½ Swap bytes when reading both the low and high byte of a word. Note there is nothing to swap after reading the first byte
+																							//	if I2C_SLV0_REG[0] = 1, or if the last byte read has a register address lsb = 0. 0 ï¿½ no swapping occurs, bytes are written in order read.
 #define I2C_SLV0_CTRL_WRITE_I2C_SLV0_REG_DIS(Data)      MPUi2cWrite(0x27, 1, 5, (uint8_t)Data)		//   When set, the transaction does not write a register value, it will only read data, or write data
 #define I2C_SLV0_CTRL_WRITE_I2C_SLV0_GRP(Data)          MPUi2cWrite(0x27, 1, 4, (uint8_t)Data)		//   External sensor data typically comes in as groups of two bytes. This bit is used to determine if the groups are from the slaves
 																							//	register address 0 and 1, 2 and 3, etc.., or if the groups are address 1 and 2, 3 and 4, etc..
@@ -128,6 +131,7 @@
 																							//   1 indicates slave register addresses 1 and 2 are grouped together (even numbered register ends the group).
 																							//   This allows byte swapping of registers that are grouped starting at any address.
 #define I2C_SLV0_CTRL_WRITE_I2C_SLV0_LENG(Data)         MPUi2cWrite(0x27, 4, 3, (uint8_t)Data)		//   Number of bytes to be read from I2C slave 0
+
 
 // I2C Slave 1
 #define I2C_SLV1_ADDR_WRITE_I2C_SLV1_RNW(Data)          MPUi2cWrite(0x28, 1, 7, (uint8_t)Data)		//   I2C STUFF
@@ -160,17 +164,17 @@
 #define I2C_SLV3_CTRL_WRITE_I2C_SLV3_LENG(Data)         MPUi2cWrite(0x30, 5, 3, (uint8_t)Data)		//   I2C STUFF
 
 // I2C Slave 4
-#define I2C_SLV4_ADDR_WRITE_I2C_SLV4_RNW(Data)          MPUi2cWrite(0x31, 1, 7, (uint8_t)Data)		//   1 – Transfer is a read, 0 – Transfer is a write
+#define I2C_SLV4_ADDR_WRITE_I2C_SLV4_RNW(Data)          MPUi2cWrite(0x31, 1, 7, (uint8_t)Data)		//   1 ï¿½ Transfer is a read, 0 ï¿½ Transfer is a write
 #define I2C_SLV4_ADDR_WRITE_I2C_ID_4(Data)              MPUi2cWrite(0x31, 7, 6, (uint8_t)Data)		//   Physical address of I2C slave 4
 #define I2C_SLV4_REG_WRITE_I2C_SLV4_REG(Data)           MPUi2cWriteByte(0x32, (uint8_t)Data)			//   I2C slave 0 register address from where to begin data transfer
 #define I2C_SLV4_DO_WRITE_I2C_SLV4_DO(Data)             MPUi2cWriteByte(0x33, (uint8_t)Data)			//   Data to be written to I2C Slave 4 if enabled.
-#define I2C_SLV4_CTRL_WRITE_I2C_SLV4_EN(Data)           MPUi2cWrite(0x34, 1, 7, (uint8_t)Data)		//   1 – Enable data transfer with this slave at the sample rate. If read
+#define I2C_SLV4_CTRL_WRITE_I2C_SLV4_EN(Data)           MPUi2cWrite(0x34, 1, 7, (uint8_t)Data)		//   1 ï¿½ Enable data transfer with this slave at the sample rate. If read
 																							//	 command, store data in I2C_SLV4_DI register, if write command, write data
 																							//	 stored in I2C_SLV4_DO register. Bit is cleared when a single transfer is
 																							//	 complete. Be sure to write I2C_SLV4_DO first
-																							//	 0 – function is disabled for this slave
-#define I2C_SLV4_CTRL_WRITE_SLV4_DONE_INT_EN(Data)      MPUi2cWrite(0x34, 1, 6, (uint8_t)Data)		//   1 – Enables the completion of the I2C slave 4 data transfer to cause an interrupt.
-																							//	 0 – Completion of the I2C slave 4 data transfer will not cause an interrupt.
+																							//	 0 ï¿½ function is disabled for this slave
+#define I2C_SLV4_CTRL_WRITE_SLV4_DONE_INT_EN(Data)      MPUi2cWrite(0x34, 1, 6, (uint8_t)Data)		//   1 ï¿½ Enables the completion of the I2C slave 4 data transfer to cause an interrupt.
+																							//	 0 ï¿½ Completion of the I2C slave 4 data transfer will not cause an interrupt.
 #define I2C_SLV4_CTRL_WRITE_I2C_SLV4_REG_DIS(Data)      MPUi2cWrite(0x34, 1, 5, (uint8_t)Data)		//   When set, the transaction does not write a register value, it will only read data, or write data
 #define I2C_SLV4_CTRL_WRITE_I2C_MST_DLY(Data)           MPUi2cWrite(0x34, 5, 4, (uint8_t)Data)		//   When enabled via the I2C_MST_DELAY_CTRL, those slaves will only be enabled every (1+I2C_MST_DLY) samples (as determined by the SMPLRT_DIV and DLPF_CFG registers.
 																							//   Delay mag data retrieval to once every other accel/gyro data sample
@@ -298,12 +302,14 @@
 #define AKM_S1_DO				0x64
 #define AKM_I2C_DELAY_CTRL		0x67
 
+
+
 // setup_compass Creates:
 #define EXT_I2C_ST1_READ_BYTE(Data)						MPUi2cReadByte(0x49, (uint8_t *)Data)
 #define EXT_I2C_ST1_READ_DATA_READY(Data)				MPUi2cRead(0x49, 1,0, (uint8_t *)Data)
 #define EXT_I2C_ST1_READ_OVERRUN(Data)					MPUi2cRead(0x49, 1,1, (uint8_t *)Data)
 #define EXT_I2C_READ_RAW_COMPASS(Data)					MPUi2cReadInts(0x4A, 3, (uint16_t *)Data)
-#define EXT_I2C_ST1_READ_BYTE(Data)						MPUi2cReadByte(0x4D, (uint8_t *)Data)
+//#define EXT_I2C_ST1_READ_BYTE(Data)						MPUi2cReadByte(0x4D, (uint8_t *)Data)
 #define EXT_I2C_ST1_READ_DATA_ERROR(Data)				MPUi2cRead(0x4D, 1,2 (uint8_t *)Data)
 #define EXT_I2C_ST1_READ_SENSOR_OVERFLOW(Data)			MPUi2cRead(0x4D, 1,3 (uint8_t *)Data)
 #define EXT_I2C_ST1_READ_BITM(Data)						MPUi2cRead(0x4D, 1,4 (uint8_t *)Data)
@@ -330,8 +336,8 @@
 
 
 #define AKM_ST1_READ_BYTE(compass_addr, Data)				MPUi2cReadByte(compass_addr,0x02,(uint8_t *)Data)	//BIT 0 and Bit 1
-#define AKM_ST1_READ_DATA_READY(compass_addr, Data)			MPUi2cRead(compass_addr,0x02,1,0,(uint8_t *)Data)	//BIT 0 DRDY bit turns to “1” when data is ready in single measurement mode or self-test mode. It returns to “0” when any one of ST2 register or measurement data register (HXL to HZH) is read.
-#define AKM_ST1_READ_DATA_OVERRUN(compass_addr, Data)		MPUi2cRead(compass_addr,0x02,1,1,(uint8_t *)Data)	//BIT 1 mpu9250 ONLY DOR bit turns to “1” when data has been skipped in continuous measurement mode or external trigger measurement mode. It returns to “0” when any one of ST2 register or measurement data register (HXL~HZH) is read.
+#define AKM_ST1_READ_DATA_READY(compass_addr, Data)			MPUi2cRead(compass_addr,0x02,1,0,(uint8_t *)Data)	//BIT 0 DRDY bit turns to ï¿½1ï¿½ when data is ready in single measurement mode or self-test mode. It returns to ï¿½0ï¿½ when any one of ST2 register or measurement data register (HXL to HZH) is read.
+#define AKM_ST1_READ_DATA_OVERRUN(compass_addr, Data)		MPUi2cRead(compass_addr,0x02,1,1,(uint8_t *)Data)	//BIT 1 mpu9250 ONLY DOR bit turns to ï¿½1ï¿½ when data has been skipped in continuous measurement mode or external trigger measurement mode. It returns to ï¿½0ï¿½ when any one of ST2 register or measurement data register (HXL~HZH) is read.
 
 #define AKM_DATA_READ_RAW_COMPASS_DATA(compass_addr, Data)	MPUi2cReadBytes(compass_addr,0x03,6,(uint8_t *)Data) // Read the six raw data and ST2 registers sequentially into data array
 
@@ -345,8 +351,8 @@
 #define AKM_HZ_READ_HZ(compass_addr, Data)					MPUi2cReadInt(compass_addr,0x07,(uint16_t *)Data);SwapBytes(Data[0])
 
 #define AKM_ST2_READ_BYTE(compass_addr, Data)				MPUi2cReadByte(compass_addr,0x09,(uint8_t *)Data)	// BIT 2, BIT 3, BIT 4
-#define AKM_ST2_READ_SENSOR_OVERFLOW(compass_addr, Data)	MPUi2cRead(compass_addr,0x09,1,3,(uint8_t *)Data)	// BIT 3 HOFL In single measurement mode and self-test mode, magnetic sensor may overflow even though measurement data register is not saturated. In this case, measurement data is not correct and HOFL bit turns to “1”. When next measurement stars, it returns to “0”.
-#define AKM_ST2_READ_DATA_ERROR(compass_addr, Data)			MPUi2cRead(compass_addr,0x09,1,2,(uint8_t *)Data)	// BIT 2 DERR  When data reading is started out of data readable period, the read data are not correct. In this case, data read error occurs and DERR bit turns to “1”. When ST2 register is read, it returns to “0”.
+#define AKM_ST2_READ_SENSOR_OVERFLOW(compass_addr, Data)	MPUi2cRead(compass_addr,0x09,1,3,(uint8_t *)Data)	// BIT 3 HOFL In single measurement mode and self-test mode, magnetic sensor may overflow even though measurement data register is not saturated. In this case, measurement data is not correct and HOFL bit turns to ï¿½1ï¿½. When next measurement stars, it returns to ï¿½0ï¿½.
+#define AKM_ST2_READ_DATA_ERROR(compass_addr, Data)			MPUi2cRead(compass_addr,0x09,1,2,(uint8_t *)Data)	// BIT 2 DERR  When data reading is started out of data readable period, the read data are not correct. In this case, data read error occurs and DERR bit turns to ï¿½1ï¿½. When ST2 register is read, it returns to ï¿½0ï¿½.
 #define AKM_ST2_READ_BITM(compass_addr, Data)				MPUi2cRead(compass_addr,0x09,1,4,(uint8_t *)Data)	// BIT 4 Output bit setting Mirror of CNTL1 BIT 4  0 = 14-BIT 1 = 16-BIT
 
 //AKM_CNTL	Options		(0x0A)
@@ -378,7 +384,7 @@
 #define AKM_ASTC_WRITE_GEN_MAG_FIELD(compass_addr)			MPUi2cWrite(compass_addr,0x0C,1,6,(uint8_t)1) //Generate magnetic field for self-test
 #define AKM_ASTC_WRITE_NORMAL(compass_addr)					MPUi2cWrite(compass_addr,0x0C,1,6,(uint8_t)0) //Normal
 
-//#define AKM_ASTC_WRITE_All(compass_addr, Data)			MPUi2cWrite(compass_addr,0x0F,1,0,(uint8_t)1) // Once I2CDIS is turned to “1” and I2C bus interface is disabled, re-setting I2CDIST to “0” is prohibited. To enable I2C bus interface, reset AK8975C by turning VDD to OFF (0V) once.
+//#define AKM_ASTC_WRITE_All(compass_addr, Data)			MPUi2cWrite(compass_addr,0x0F,1,0,(uint8_t)1) // Once I2CDIS is turned to ï¿½1ï¿½ and I2C bus interface is disabled, re-setting I2CDIST to ï¿½0ï¿½ is prohibited. To enable I2C bus interface, reset AK8975C by turning VDD to OFF (0V) once.
 
 //ASAX, ASAY, ASAZ: Sensitivity Adjustment values
 #define AKM_ASAXYZ_WRITE_SENS_ADJ_XYZ(compass_addr, Data)	MPUi2cWriteBytes(compass_addr,0x10,3,(uint8_t *)Data)
@@ -403,9 +409,9 @@
 #define AKM_REG_ASAY			(0x11)
 #define AKM_REG_ASAZ			(0x12)
 
-#define AKM_POWER_DOWN          (0x00)
+//#define AKM_POWER_DOWN          (0x00)
 #define AKM_SINGLE_MEASUREMENT  (0x01)
-#define AKM_FUSE_ROM_ACCESS     (0x0F)
+//#define AKM_FUSE_ROM_ACCESS     (0x0F)
 #define AKM_MODE_SELF_TEST      (0x08)
 
 

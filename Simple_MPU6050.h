@@ -19,7 +19,7 @@ class Simple_MPU6050 : public I2Cdev {
     typedef void (*_ON_FIFO_CB_PTR)(int16_t *gyro, int16_t *accel, int32_t *quat, uint32_t *timestamp); // Create a type to point to a function.
     _ON_FIFO_CB_PTR on_FIFO_cb = nothing;
   public:
-    typedef struct SensorList_s {
+    struct SensorList_s {
       int16_t ax ;
       int16_t ay ;
       int16_t az ;
@@ -31,9 +31,10 @@ class Simple_MPU6050 : public I2Cdev {
 
 	float mx, my, mz; // variables to hold latest magnetometer data values
 
-    typedef union AccelGyro_u {
-      SensorList_s V;
-      int16_t intData[sizeof(SensorList_s) / 2];
+    union AccelGyro_u 
+    {
+        SensorList_s V;
+        int16_t intData[sizeof(SensorList_s) / 2];
     };
 
 	const float radians_to_degrees = 180.0 / M_PI;
