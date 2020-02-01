@@ -11,7 +11,7 @@
     #define M_PI 3.14159265358979323846
 #endif
 
-const int interruptPin = 32; 
+const int interruptPin = D8; 
 
 class Simple_MPU6050 : public I2Cdev {
     static void nothing(void) {};
